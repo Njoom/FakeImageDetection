@@ -129,10 +129,10 @@ def main(
 
 
     # Load the dataset from directories 
-    train_data = datasets.ImageFolder(root='/home/users/chandler_doloriel/scratch/Datasets/CIFAKE/train', transform=train_transform)
+    train_data = datasets.ImageFolder(root='/content/drive/MyDrive/Wang_CVPR2020/training', transform=train_transform)
     train_sampler = DistributedSampler(train_data, shuffle=True, seed=seed)
     train_loader = DataLoader(train_data, batch_size=batch_size, sampler=train_sampler, num_workers=4)
-    val_data = datasets.ImageFolder(root='/home/users/chandler_doloriel/scratch/Datasets/CIFAKE/test', transform=val_transform)
+    val_data = datasets.ImageFolder(root='/content/drive/MyDrive/Wang_CVPR2020/testing', transform=val_transform)
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False, num_workers=4)
 
 
