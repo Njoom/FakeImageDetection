@@ -1,4 +1,4 @@
-pip install ftfy
+
 
 import gzip
 import html
