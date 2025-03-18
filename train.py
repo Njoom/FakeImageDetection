@@ -36,7 +36,7 @@ os.environ['WANDB_CACHE_DIR'] = './wandb'
 local_rank = int(os.environ['LOCAL_RANK'])
 
 def main(
-    #local_rank=0,
+    
     nhead=8,
     num_layers=6,
     num_epochs=10,
@@ -235,7 +235,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Your model description here")
 
-    parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
+    #parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
     parser.add_argument('--num_epochs', type=int, default=2, help='Number of epochs training')
     parser.add_argument(
         '--model_name',
@@ -372,7 +372,7 @@ if __name__ == "__main__":
     print("-" * 30, "\n")
 
     main(
-        local_rank=args.local_rank,
+        
         num_epochs=num_epochs,
         ratio=ratio/100,
         batch_size=args.batch_size,
