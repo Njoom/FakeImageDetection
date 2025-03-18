@@ -29,13 +29,13 @@ from networks.clip_models import CLIPModel
 import os
 os.environ['NCCL_BLOCKING_WAIT'] = '1'
 os.environ['NCCL_DEBUG'] = 'WARN'
-
+os.environ['LOCAL_RANK'] = '0'
 os.environ['WANDB_CONFIG_DIR'] = './wandb'
 os.environ['WANDB_DIR'] = './wandb'
 os.environ['WANDB_CACHE_DIR'] = './wandb'
 
 def main(
-    local_rank=1,
+    local_rank=0,
     nhead=8,
     num_layers=6,
     num_epochs=10,
@@ -234,7 +234,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Your model description here")
 
-    parser.add_argument('--local_rank', type=int, default=1, help='Local rank for distributed training')
+    parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
     parser.add_argument('--num_epochs', type=int, default=2, help='Number of epochs training')
     parser.add_argument(
         '--model_name',
