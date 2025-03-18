@@ -1,3 +1,5 @@
+
+
 #!/bin/bash
 
 # Get the current date
@@ -9,10 +11,10 @@ echo "The current date is: $current_date"
 # Define the arguments for your training script
 GPUs="$1"
 NUM_GPU=$(echo $GPUs | awk -F, '{print NF}')
-NUM_EPOCHS=10000
+NUM_EPOCHS=10
 PROJECT_NAME="Frequency-Masking"
-MODEL_NAME="RN50" # RN50_mod, RN50, clip_vitl14, clip_rn50
-MASK_TYPE="nomask" # nomask, spectral, pixel, patch
+MODEL_NAME="clip" # RN50_mod, RN50, clip_vitl14, clip_rn50
+MASK_TYPE="spectral" # nomask, spectral, pixel, patch
 BAND="all" # all, low, mid, high
 RATIO=15
 BATCH_SIZE=128
