@@ -29,13 +29,14 @@ from networks.clip_models import CLIPModel
 import os
 os.environ['NCCL_BLOCKING_WAIT'] = '1'
 os.environ['NCCL_DEBUG'] = 'WARN'
-os.environ['LOCAL_RANK'] = '0'
 os.environ['WANDB_CONFIG_DIR'] = './wandb'
 os.environ['WANDB_DIR'] = './wandb'
 os.environ['WANDB_CACHE_DIR'] = './wandb'
 
+local_rank = int(os.environ['LOCAL_RANK'])
+
 def main(
-    local_rank=0,
+    #local_rank=0,
     nhead=8,
     num_layers=6,
     num_epochs=10,
@@ -62,7 +63,7 @@ def main(
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
+    
     device = torch.device(f'cuda:{local_rank}')
     torch.cuda.set_device(device)
     dist.init_process_group(backend='nccl')
