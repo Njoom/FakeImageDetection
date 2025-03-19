@@ -27,10 +27,9 @@ learning_rate=0.0002
 export CUDA_VISIBLE_DEVICES=$GPUs
 
 echo "Using $NUM_GPU GPUs with IDs: $GPUs"
-
+#python -m torch.distributed.launch --nproc_per_node=$NUM_GPU train.py \
 # Run the distributed training command
-python -m torch.distributed.launch --nproc_per_node=$NUM_GPU train.py \
-  -- \
+torchrun --nproc_per_node=$NUM_GPU train.py \
   --num_epochs $NUM_EPOCHS \
   --project_name $PROJECT_NAME \
   --model_name $MODEL_NAME \
@@ -40,7 +39,7 @@ python -m torch.distributed.launch --nproc_per_node=$NUM_GPU train.py \
   --lr ${learning_rate} \
   --batch_size $BATCH_SIZE \
   --early_stop \
-  --pretrained \
+  --pretrained 
   # --clip_grad \
   # --debug \
   # --resume_train $RESUME \
