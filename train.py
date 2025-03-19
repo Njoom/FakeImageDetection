@@ -66,8 +66,9 @@ def main(
 
     local_rank = int(os.environ['LOCAL_RANK'])
     dist.init_process_group(backend='nccl')
-    torch.cuda.set_device(local_rank) # Set device using local_rank
-    device = torch.device(f'cuda:{local_rank}')
+    torch.cuda.set_device(local_rank)  # Pass local_rank directly
+    device = torch.device(f'cuda:{local_rank}')  # *Then* create device object
+
    
 
     wandb_resume = "allow" if resume_train else None
