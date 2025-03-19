@@ -66,8 +66,9 @@ def main(
 
     local_rank = int(os.environ['LOCAL_RANK'])
     dist.init_process_group(backend='nccl')
-    torch.cuda.set_device(local_rank)  # Pass local_rank directly
-    device = torch.device(f'cuda:{local_rank}')  # *Then* create device object
+    torch.cuda.set_device(local_rank)  
+    device = torch.device(f'cuda:{local_rank}')  
+    print(f"Rank {dist.get_rank()}: local_rank = {local_rank}")
 
    
 
