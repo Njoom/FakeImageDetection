@@ -33,7 +33,7 @@ os.environ['WANDB_CONFIG_DIR'] = './wandb'
 os.environ['WANDB_DIR'] = './wandb'
 os.environ['WANDB_CACHE_DIR'] = './wandb'
 
-local_rank = int(os.environ['LOCAL_RANK'])
+
 
 def main(
     
@@ -64,10 +64,10 @@ def main(
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    device = torch.device(f'cuda:{local_rank}')
+    local_rank = int(os.environ['LOCAL_RANK'])
     dist.init_process_group(backend='nccl')
     torch.cuda.set_device(local_rank) # Set device using local_rank
-    device = torch.device("cuda", local_rank)  # Use local_rank to define device
+    device = torch.device(f'cuda:{local_rank}')
    
 
     wandb_resume = "allow" if resume_train else None
