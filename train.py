@@ -63,10 +63,12 @@ def main(
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    
+
     device = torch.device(f'cuda:{local_rank}')
-    torch.cuda.set_device(device)
     dist.init_process_group(backend='nccl')
+    torch.cuda.set_device(local_rank) # Set device using local_rank
+    device = torch.device("cuda", local_rank)  # Use local_rank to define device
+   
 
     wandb_resume = "allow" if resume_train else None
 
