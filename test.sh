@@ -13,6 +13,8 @@ BATCH_SIZE=64
 # Set the CUDA_VISIBLE_DEVICES environment variable to use GPUs
 export CUDA_VISIBLE_DEVICES=$GPUs
 
+export TORCH_NCCL_BLOCKING_WAIT=1  # Or 0, depending on your needs
+
 echo "Using $NUM_GPU GPUs with IDs: $GPUs"
 
 # Run the test command
