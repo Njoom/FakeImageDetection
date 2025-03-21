@@ -4,7 +4,7 @@
 GPUs="$1"
 NUM_GPU=$(echo $GPUs | awk -F, '{print NF}')
 DATA_TYPE="Wang_CVPR20"  # Wang_CVPR20 or Ojha_CVPR23
-MODEL_NAME="clip_rn50" # # RN50_mod, RN50, clip_vitl14, clip_rn50
+MODEL_NAME="RN50" # # RN50_mod, RN50, clip_vitl14, clip_rn50
 MASK_TYPE="nomask" # spectral, pixel, patch or nomask
 BAND="all" # all, low, mid, high
 RATIO=15
