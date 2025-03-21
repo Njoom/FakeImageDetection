@@ -27,6 +27,12 @@ os.environ['NCCL_BLOCKING_WAIT'] = '1'
 os.environ['NCCL_DEBUG'] = 'WARN'
 
 if __name__ == "__main__":
+    local_rank = int(os.environ['LOCAL_RANK'])
+    dist.init_process_group(backend='nccl')
+    torch.cuda.set_device(local_rank)  
+    device = torch.device(f'cuda:{local_rank}')  
+    print(f"Rank {dist.get_rank()}: local_rank = {local_rank}")
+
     parser = argparse.ArgumentParser(description="Settings for your script")
 
     parser.add_argument(
@@ -89,7 +95,7 @@ if __name__ == "__main__":
         action='store_true', 
         help='if the model is from my own code'
         )
-    parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
+    #parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
 
     args = parser.parse_args()
 
@@ -100,11 +106,12 @@ if __name__ == "__main__":
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-
+    
+    """
     device = torch.device(f'cuda:{args.local_rank}')
     torch.cuda.set_device(device)
     dist.init_process_group(backend='nccl')
-
+    """
     model_name = args.model_name.lower()
     finetune = 'ft' if args.pretrained else ''
     band = '' if args.band == 'all' else args.band
