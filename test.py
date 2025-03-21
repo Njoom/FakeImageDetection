@@ -133,11 +133,21 @@ if __name__ == "__main__":
     print(f"Checkpoint Type: {checkpoint_path}")
     print(f"Results saved to: {results_path}/{filename}")
     print("-" * 30, "\n")
+    
 
+    #Note: the testing is implemented according to test multiple datasets from different GANs, here only i put random imgs with 2 random dirs i.e. car1,car2
     if args.data_type == 'Wang_CVPR20':
         datasets = {
-            'ProGAN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/progan',
-            'CycleGAN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/cyclegan',
+            'ProGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car1',
+            'CycleGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car2',
+        }
+
+    
+    """
+    if args.data_type == 'Wang_CVPR20':
+        datasets = {
+            'ProGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car1',
+            'CycleGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car2',
             'BigGAN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/biggan',
             'StyleGAN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/stylegan',
             'GauGAN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/gaugan',
@@ -148,6 +158,7 @@ if __name__ == "__main__":
             'CRN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/crn',
             'IMLE': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/imle',
         }
+        """
     # elif args.data_type == 'GenImage':
     #     datasets = {
     #         'VQDM': '/home/users/chandler_doloriel/scratch/Datasets/GenImage/imagenet_vqdm/imagenet_vqdm/val',
