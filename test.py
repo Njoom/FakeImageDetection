@@ -6,7 +6,7 @@ from sklearn.metrics import average_precision_score, precision_score, recall_sco
 import numpy as np
 from PIL import Image
 import os
-import clip
+#import clip #الكود هذا فيه مشكله مع المودل كليب سواء هنا او بالترين فايل!
 from tqdm import tqdm
 import timm
 import argparse
