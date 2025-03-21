@@ -135,14 +135,6 @@ if __name__ == "__main__":
     print("-" * 30, "\n")
     
 
-    #Note: the testing is implemented according to test multiple datasets from different GANs, here only i put random imgs with 2 random dirs i.e. car1,car2
-    if args.data_type == 'Wang_CVPR20':
-        datasets = {
-            'ProGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car1',
-            'CycleGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car2',
-        }
-
-    
     """
     if args.data_type == 'Wang_CVPR20':
         datasets = {
@@ -158,12 +150,20 @@ if __name__ == "__main__":
             'CRN': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/crn',
             'IMLE': '/home/users/chandler_doloriel/scratch/Datasets/Wang_CVPR2020/testing/imle',
         }
-        """
+        
     # elif args.data_type == 'GenImage':
     #     datasets = {
     #         'VQDM': '/home/users/chandler_doloriel/scratch/Datasets/GenImage/imagenet_vqdm/imagenet_vqdm/val',
     #         'Glide': '/home/users/chandler_doloriel/scratch/Datasets/GenImage/imagenet_glide/imagenet_glide/val',
     #     }
+      """
+    #Note: the testing is implemented according to test multiple datasets from different GANs, here only i put random imgs with 2 random dirs i.e. car1,car2
+    if args.data_type == 'Wang_CVPR20':
+        datasets = {
+            'ProGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car1',
+            'CycleGAN': '/content/drive/MyDrive/Wang_CVPR2020/testing/car2',
+        }
+
     elif args.data_type == 'Ojha_CVPR23':
         datasets = {
             'Guided': '/home/users/chandler_doloriel/scratch/Datasets/Ojha_CVPR2023/guided',
