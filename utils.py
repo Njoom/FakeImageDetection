@@ -184,11 +184,11 @@ def train_model(
             if phase == 'Validation':
                  if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                     wandb.log({"Validation Loss": epoch_loss, "Validation Acc": acc, "Validation AP": ap}, step=epoch)
-                early_stopping(acc, model, optimizer, epoch)  # Pass the accuracy instead of loss
-                if early_stopping.early_stop:
-                    if not torch.distributed.is_initialized() or dist.get_rank() == 0:
-                        print("Early stopping")
-                    return model
+                 early_stopping(acc, model, optimizer, epoch)  # Pass the accuracy instead of loss
+                 if early_stopping.early_stop:
+                     if not torch.distributed.is_initialized() or dist.get_rank() == 0:
+                         print("Early stopping")
+                     return model
             else:
                 if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                     wandb.log({"Training Loss": epoch_loss, "Training Acc": acc, "Training AP": ap}, step=epoch)
