@@ -37,67 +37,15 @@ if __name__ == "__main__":
     print(f"Using device: {device}")
 
     parser = argparse.ArgumentParser(description="Settings for your script")
-
-    parser.add_argument(
-        '--model_name',
-        default='RN50',
-        type=str,
-        choices=[
-            'RN18', 'RN34', 'RN50', 'RN50_mod', 'clip_rn50', 'clip_vitl14',
-        ],
-        help='Type of model to use; includes ResNet variants'
-        )
-    parser.add_argument(
-        '--clip_ft', 
-        action='store_true', 
-        help='For loading a finetuned clip model'
-        )
-    parser.add_argument(
-        '--mask_type', 
-        default='spectral', 
-        choices=[
-            'patch', 
-            'spectral',
-            'pixel', 
-            'nomask'], 
-        help='Type of mask generator'
-        )
-    parser.add_argument(
-        '--band', 
-        default='all',
-        type=str,
-        choices=[
-            'all', 'low', 'mid', 'high',]
-        )
-    parser.add_argument(
-        '--pretrained', 
-        action='store_true', 
-        help='For pretraining'
-        )
-    parser.add_argument(
-        '--ratio', 
-        type=int, 
-        default=50,
-        help='Ratio of mask to apply'
-        )
-    parser.add_argument(
-        '--batch_size', 
-        type=int, 
-        default=64, 
-        help='Batch Size'
-        )
-    parser.add_argument(
-        '--data_type', 
-        default="Wang_CVPR20", 
-        type=str, 
-        choices=['Wang_CVPR20', 'Ojha_CVPR23'], 
-        help="Dataset Type"
-        )
-    parser.add_argument(
-        '--other_model', 
-        action='store_true', 
-        help='if the model is from my own code'
-        )
+    parser.add_argument('--model_name', default='RN50', type=str,choices=['RN18', 'RN34', 'RN50', 'RN50_mod', 'clip_rn50', 'clip_vitl14',],help='Type of model to use; includes ResNet variants')
+    parser.add_argument('--clip_ft', action='store_true',  help='For loading a finetuned clip model')
+    parser.add_argument('--mask_type', default='spectral', choices=['patch', 'spectral','pixel','nomask'], help='Type of mask generator')
+    parser.add_argument('--band', default='all',type=str,choices=['all', 'low', 'mid', 'high',])
+    parser.add_argument('--pretrained', action='store_true', help='For pretraining')
+    parser.add_argument('--ratio',type=int, default=50,help='Ratio of mask to apply')
+    parser.add_argument('--batch_size', type=int,default=64, help='Batch Size')
+    parser.add_argument('--data_type', default="Wang_CVPR20",type=str,choices=['Wang_CVPR20', 'Ojha_CVPR23'], help="Dataset Type")
+    parser.add_argument('--other_model', action='store_true', help='if the model is from my own code')
     #parser.add_argument('--local_rank', type=int, default=0, help='Local rank for distributed training')
 
     args = parser.parse_args()
@@ -202,7 +150,7 @@ if __name__ == "__main__":
             device,
             args,
         )
-        if dist.get_rank() == 0:
+        if not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0:
             # Write the results to the file
             with open(f'{results_path}/{filename}', 'a') as file:
                 if file.tell() == 0: # Check if the file is empty
