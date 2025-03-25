@@ -107,11 +107,7 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     
-    """
-    device = torch.device(f'cuda:{args.local_rank}')
-    torch.cuda.set_device(device)
-    dist.init_process_group(backend='nccl')
-    """
+   
     model_name = args.model_name.lower()
     finetune = 'ft' if args.pretrained else ''
     band = '' if args.band == 'all' else args.band
