@@ -136,7 +136,7 @@ if __name__ == "__main__":
     dataset_count = len(datasets)
 
     for dataset_name, dataset_path in datasets.items():
-        if dist.get_rank() == 0:
+        if not torch.distributed.is_initialized() or dist.get_rank() == 0:
             print(f"\nEvaluating {dataset_name}")
 
         avg_ap, avg_acc, auc = evaluate_model(
