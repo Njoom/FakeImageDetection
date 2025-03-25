@@ -106,7 +106,7 @@ def train_model(
         # For CLIP model, extract features only once
         if 'clip' in args.model_name and not features_exist and args.clip_grad == False:
             # Process with rank 0 performs the extraction
-            if dist.get_rank() == 0:
+            if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                 extract_and_save_features(model, train_loader, "./clip_train_" + features_path, device)
                 extract_and_save_features(model, val_loader, "./clip_val_" + features_path, device)
                 # Create a temporary file to signal completion
@@ -144,7 +144,7 @@ def train_model(
             running_loss = 0.0
             y_true, y_pred = [], []
 
-            disable_tqdm = dist.get_rank() != 0
+            disable_tqdm = not torch.distributed.is_initialized() or dist.get_rank() != 0
             data_loader_with_tqdm = tqdm(data_loader, f"{phase}", disable=disable_tqdm)
 
             for batch_data in data_loader_with_tqdm:
@@ -177,20 +177,20 @@ def train_model(
             ap = average_precision_score(y_true, y_pred)
 
             if epoch % 1 == 0:  # Only print every epoch
-                if dist.get_rank() == 0:
+                if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                     print(f'{phase} Loss: {epoch_loss:.4f} Acc: {acc:.4f} AP: {ap:.4f}')
 
             # Early stopping
             if phase == 'Validation':
-                if dist.get_rank() == 0:
+                 if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                     wandb.log({"Validation Loss": epoch_loss, "Validation Acc": acc, "Validation AP": ap}, step=epoch)
                 early_stopping(acc, model, optimizer, epoch)  # Pass the accuracy instead of loss
                 if early_stopping.early_stop:
-                    if dist.get_rank() == 0:
+                    if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                         print("Early stopping")
                     return model
             else:
-                if dist.get_rank() == 0:
+                if not torch.distributed.is_initialized() or dist.get_rank() == 0:
                     wandb.log({"Training Loss": epoch_loss, "Training Acc": acc, "Training AP": ap}, step=epoch)
 
     return model
@@ -238,9 +238,13 @@ def evaluate_model(
     else:
         raise ValueError("wrong dataset input")
 
-    test_sampler = DistributedSampler(test_dataset)
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, sampler=test_sampler, shuffle=False, num_workers=4)
-
+    
+    if torch.distributed.is_initialized():
+        test_sampler = DistributedSampler(test_dataset)
+        test_dataloader = DataLoader(test_dataset, batch_size=batch_size, sampler=test_sampler, shuffle=False, num_workers=4)
+    else:
+        test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+        
     if model_name == 'RN50':
         # model = vis_models.resnet50(pretrained=pretrained)
         # model.fc = nn.Linear(model.fc.in_features, 1)
@@ -262,23 +266,33 @@ def evaluate_model(
         raise ValueError(f"Model {model_name} not recognized!")
 
     model = model.to(device)
-    model = DistributedDataParallel(model, find_unused_parameters=True)
+    if torch.distributed.is_initialized():
+        model = DistributedDataParallel(model, find_unused_parameters=True)
 
     checkpoint = torch.load(checkpoint_path)
 
     if 'clip' in args.model_name and args.other_model != True and args.clip_ft == False:
-        model.module.fc.load_state_dict(checkpoint['model_state_dict'])
+        if torch.distributed.is_initialized():
+             model.module.fc.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.fc.load_state_dict(checkpoint['model_state_dict'])
     elif args.other_model:
-        model.module.fc.load_state_dict(checkpoint)
+        if torch.distributed.is_initialized():
+            model.module.fc.load_state_dict(checkpoint)
+        else:
+            model.fc.load_state_dict(checkpoint)
     else:
-        model.load_state_dict(checkpoint['model_state_dict'])
+        if torch.distributed.is_initialized():
+            model.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            model.load_state_dict(checkpoint['model_state_dict'])
 
     model = model.to(device)
     model.eval() 
 
     y_true, y_pred = [], []
 
-    disable_tqdm = dist.get_rank() != 0
+    disable_tqdm = not torch.distributed.is_initialized() or dist.get_rank() != 0
     data_loader_with_tqdm = tqdm(test_dataloader, "test dataloading", disable=disable_tqdm)
 
     with torch.no_grad():
@@ -298,7 +312,7 @@ def evaluate_model(
     ap = average_precision_score(y_true, y_pred)
     auc = roc_auc_score(y_true, y_pred)
 
-    if dist.get_rank() == 0:
+    if not torch.distributed.is_initialized() or dist.get_rank() == 0:
         print(f'Average Precision: {ap}')
         print(f'Accuracy: {acc}')
         print(f'ROC AUC Score: {auc}')
