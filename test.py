@@ -27,11 +27,14 @@ os.environ['NCCL_BLOCKING_WAIT'] = '1'
 os.environ['NCCL_DEBUG'] = 'WARN'
 
 if __name__ == "__main__":
-    local_rank = int(os.environ['LOCAL_RANK'])
-    dist.init_process_group(backend='nccl')
-    torch.cuda.set_device(local_rank)  
-    device = torch.device(f'cuda:{local_rank}')  
-    print(f"Rank {dist.get_rank()}: local_rank = {local_rank}")
+    #local_rank = int(os.environ['LOCAL_RANK'])
+    #dist.init_process_group(backend='nccl')
+    #torch.cuda.set_device(local_rank)  
+    #device = torch.device(f'cuda:{local_rank}')  
+    #print(f"Rank {dist.get_rank()}: local_rank = {local_rank}")
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
 
     parser = argparse.ArgumentParser(description="Settings for your script")
 
