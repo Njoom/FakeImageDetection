@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # Pretty print the arguments
     print("\nSelected Configuration:")
     print("-" * 30)
-    print(f"Device: {args.local_rank}")
+    #print(f"Device: {args.local_rank}")
     print(f"Dataset Type: {args.data_type}")
     print(f"Model type: {args.model_name}")
     print(f"Ratio of mask: {ratio}")
@@ -209,7 +209,7 @@ if __name__ == "__main__":
                 if file.tell() == 0: # Check if the file is empty
                     file.write("Selected Configuration:\n")
                     file.write("-" * 28 + "\n")
-                    file.write(f"Device: {args.local_rank}\n")
+                    #file.write(f"Device: {args.local_rank}\n")
                     file.write(f"Dataset Type: {args.data_type}\n")
                     file.write(f"Model type: {args.model_name}\n")
                     file.write(f"Ratio of mask: {ratio}\n")
