@@ -292,7 +292,7 @@ def evaluate_model(
 
     disable_tqdm = not torch.distributed.is_initialized() or dist.get_rank() != 0
     data_loader_with_tqdm = tqdm(test_dataloader, "test dataloading", disable=disable_tqdm)
-     with torch.no_grad():
+    with torch.no_grad():
         for inputs, labels in data_loader_with_tqdm:
             inputs = inputs.to(device)
             labels = labels.float().to(device)
