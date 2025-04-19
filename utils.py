@@ -266,6 +266,60 @@ def evaluate_model(
         raise ValueError(f"Model {model_name} not recognized!")
 
     model = model.to(device)
+
+    # NjoomEdit: Handle DataParallel/DistributedDataParallel loading
+    checkpoint = torch.load(checkpoint_path, map_location=device)  # Load on the correct device
+    if 'model_state_dict' in checkpoint:
+        state_dict = checkpoint['model_state_dict']
+    else:
+        state_dict = checkpoint # Assume the entire checkpoint is the state_dict
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+        if k.startswith('module.'):
+            name = k[7:]  # remove `module.`
+            new_state_dict[name] = v
+        else:
+            new_state_dict[k] = v
+    model.load_state_dict(new_state_dict)
+    if torch.distributed.is_initialized():
+        model = DistributedDataParallel(model, device_ids=[dist.get_rank()], find_unused_parameters=True) #Ensure model is wrapped for distributed inference
+
+    model = model.to(device)
+    model.eval() 
+
+    y_true, y_pred = [], []
+
+    disable_tqdm = not torch.distributed.is_initialized() or dist.get_rank() != 0
+    data_loader_with_tqdm = tqdm(test_dataloader, "test dataloading", disable=disable_tqdm)
+     with torch.no_grad():
+        for inputs, labels in data_loader_with_tqdm:
+            inputs = inputs.to(device)
+            labels = labels.float().to(device)
+            if 'clip' in args.model_name:
+                outputs = model(inputs, return_all=True).view(-1).unsqueeze(1)
+            else:
+                outputs = model(inputs).view(-1).unsqueeze(1)
+            y_pred.extend(outputs.sigmoid().detach().cpu().numpy())
+            y_true.extend(labels.cpu().numpy())
+
+    y_true, y_pred = np.array(y_true), np.array(y_pred)
+
+    acc = accuracy_score(y_true, y_pred > 0.5)
+    ap = average_precision_score(y_true, y_pred)
+    auc = roc_auc_score(y_true, y_pred)
+
+    if not torch.distributed.is_initialized() or dist.get_rank() == 0:
+        print(f'Average Precision: {ap}')
+        print(f'Accuracy: {acc}')
+        print(f'ROC AUC Score: {auc}')
+
+    return ap, acc, auc
+"""
+
+
+
+
     if torch.distributed.is_initialized():
         model = DistributedDataParallel(model, find_unused_parameters=True)
 
@@ -318,7 +372,7 @@ def evaluate_model(
         print(f'ROC AUC Score: {auc}')
 
     return ap, acc, auc
-
+"""
 
 def extract_and_save_features(model, data_loader, save_path, device='cpu'):
     model.eval()
